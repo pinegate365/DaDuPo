@@ -26,9 +26,9 @@ from PySide2.QtGui import QDrag, QMouseEvent, QIcon
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QLineEdit, \
     QTreeWidget, QTreeWidgetItem, QAbstractItemView, QMenu, QAction, QHeaderView
 
-from data.Asap2Database import Asap2Database, ParameterType
-from icon.icon import Icon
-from widgets.BaseUIEvents import BaseUIEvents
+from DaDuPo.data.Asap2Database import Asap2Database, ParameterType
+from DaDuPo.icon.icon import Icon
+from DaDuPo.widgets.BaseUIEvents import BaseUIEvents
 
 
 class MyQTreeWidget(QTreeWidget):

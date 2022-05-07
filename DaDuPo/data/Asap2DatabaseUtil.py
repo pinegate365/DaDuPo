@@ -25,7 +25,7 @@ import struct
 from typing import Union, Tuple, List, Dict
 import json
 
-from data.Asap2Database import Asap2Parameter, Asap2Signal, Datatype, Asap2Database, ByteOrder, CompuMethod, \
+from DaDuPo.data.Asap2Database import Asap2Parameter, Asap2Signal, Datatype, Asap2Database, ByteOrder, CompuMethod, \
     CompuMethodType, Alignment, ParameterType
 
 
@@ -91,7 +91,7 @@ def process_asap2_database(db: Asap2Database):
     for s in db.asap2_parameters + db.asap2_signals:
         s.parent = db
         if s.compu_method:
-            cm = next((c for c in db.compu_methods if c.name == s.compu_method), None)
+            cm = find_asap2_compu_method(db,s.compu_method)
             s.compu_method_ref = cm
             s.identifier = '/'.join([db.name, s.name])
             if not s.unit and cm.unit:
@@ -121,6 +121,8 @@ def process_asap2_database(db: Asap2Database):
             y = next((p for p in db.asap2_parameters if p.name == s.ref_y), None)
             s.ref_x_ref = y
 
+def find_asap2_compu_method(db: Asap2Database, obj_name: str):
+    return next((c for c in db.compu_methods if c.name == obj_name), None)
 
 def find_asap2_object(db: Asap2Database, obj_name: str):
     return next((s for s in db.asap2_parameters + db.asap2_signals if s.name == obj_name), None)

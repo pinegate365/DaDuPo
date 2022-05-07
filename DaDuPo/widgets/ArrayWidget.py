@@ -25,9 +25,9 @@ from PySide2 import QtWidgets
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem
 
-from data.Asap2Database import Asap2Parameter, ParameterType
-from data.DataPool import DataPool
-from widgets.BaseUIEvents import BaseUIEvents
+from DaDuPo.data.Asap2Database import Asap2Parameter, ParameterType
+from DaDuPo.data.DataPool import DataPool
+from DaDuPo.widgets.BaseUIEvents import BaseUIEvents
 import pyqtgraph as pg
 
 

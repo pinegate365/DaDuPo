@@ -28,12 +28,12 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QWidget, QTableWidget, QHBoxLayout, QDialog, QTableWidgetItem, QSpinBox, QComboBox, \
     QVBoxLayout, QAbstractItemView
 
-from data.DataPool import DataPool, SignalConfig
+from DaDuPo.data.DataPool import DataPool, SignalConfig
 import pyqtgraph as pg
 
-from device.DeviceManager import DeviceManager
-from device.XcpClient import XcpClient
-from icon.icon import Icon
+from DaDuPo.device.DeviceManager import DeviceManager
+from DaDuPo.device.XcpClient import XcpClient
+from DaDuPo.icon.icon import Icon
 
 # for Xcp Signal & Parameter only
 class MeasurementConfigDialog(QDialog):

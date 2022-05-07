@@ -38,99 +38,26 @@ from pyxcp.dllif import SeedNKeyResult
 from pyxcp.master import Master
 import time
 
-from pyxcp.master.base import MasterBaseType
-from pyxcp.transport.base import BaseTransport, createTransport
+#from pyxcp.master.base import MasterBaseType
+#from pyxcp.transport.base import BaseTransport, createTransport
 from pyxcp.types import GetDaqResolutionInfoResponse
 
 from pprint import pprint
 from typing import Dict, List, Tuple, Union
 
-from data import Asap2DatabaseUtil
-from data.Asap2Database import Asap2Database
-from data.Asap2DatabaseUtil import size_of_asap2_object
-from data.DataPool import DataPool, SignalConfig
-from device.DeviceBase import DeviceBase
-from device.transport import *
+from DaDuPo.data import Asap2DatabaseUtil
+from DaDuPo.data.Asap2Database import Asap2Database
+from DaDuPo.data.Asap2DatabaseUtil import size_of_asap2_object
+from DaDuPo.data.DataPool import DataPool, SignalConfig
+from DaDuPo.device.DeviceBase import DeviceBase
+from DaDuPo.device.transport import *
 
+from pyxcp.transport.can import registered_drivers
+from pyxcp.transport.can import try_to_install_system_supplied_drivers
 
-class MyMaster(Master):
+try_to_install_system_supplied_drivers()
 
-
-    @staticmethod
-    def seed2key(seed):
-        return SeedNKeyResult.ACK, seed[:4] + bytes([0] * 5)
-
-    def cond_unlock(self, resources=None):
-        """Conditionally unlock resources, i.e. only unlock locked resources.
-
-        Precondition: Must assign :attr:`seedNKeyDLL`, e.g. ``master.seedNKeyDLL = "SeedNKeyXcp.dll"``
-
-        Parameters
-        ----------
-        resources: str
-            Comma or space separated list of resources, e.g. "DAQ, CALPAG".
-            The names are not case-sensitive.
-            Valid identifiers are: "calpag", "daq", "dbg", "pgm", "stim".
-
-            If omitted, try to unlock every available resource.
-
-        Raises
-        ------
-        ValueError
-            Invalid resource name.
-
-        `dllif.SeedNKeyError`
-            In case of DLL related issues.
-        """
-        import re
-        from pyxcp.dllif import SeedNKeyResult, SeedNKeyError
-
-        MAX_PAYLOAD = self.slaveProperties["maxCto"] - 2
-
-        if resources is None:
-            result = []
-            if self.slaveProperties['supportsCalpag']:
-                result.append("calpag")
-            if self.slaveProperties['supportsDaq']:
-                result.append("daq")
-            if self.slaveProperties['supportsStim']:
-                result.append("stim")
-            if self.slaveProperties['supportsPgm']:
-                result.append("pgm")
-            resources = ",".join(result)
-        protection_status = self.getCurrentProtectionStatus()
-        resource_names = [r.lower() for r in re.split(r"[ ,]", resources) if r]
-        for name in resource_names:
-            if name not in types.RESOURCE_VALUES:
-                raise ValueError("Invalid resource name '{}'.".format(name))
-            if not protection_status[name]:
-                continue
-            resource_value = types.RESOURCE_VALUES[name]
-            result = self.getSeed(types.XcpGetSeedMode.FIRST_PART, resource_value)
-            seed = list(result.seed)
-            length = result.length
-            if length == 0:
-                continue
-            if length > MAX_PAYLOAD:
-                remaining = length - len(seed)
-                while remaining > 0:
-                    result = self.getSeed(types.XcpGetSeedMode.REMAINING, resource_value)
-                    seed.extend(list(result.seed))
-                    remaining = result.length
-            result, key = self.seed2key(bytes(seed))
-            # print(binascii.hexlify(key))
-            if result == SeedNKeyResult.ACK:
-                key = list(key)
-                total_length = len(key)
-                offset = 0
-                while offset < total_length:
-                    data = key[offset: offset + MAX_PAYLOAD]
-                    key_length = len(data)
-                    offset += key_length
-                    res = self.unlock(key_length, bytes(data))
-            else:
-                raise SeedNKeyError("SeedAndKey DLL returned: {}".format(SeedNKeyResult(result).name))
-
+CAN_DRIVERS = registered_drivers()
 
 class BinPacker(object):
     def __init__(self):
@@ -173,7 +100,7 @@ class XcpClient(DeviceBase):
     def __init__(self, transport, config, db):
         import os
         os.environ["PYXCP_HANDLE_ERRORS"] = 'false'
-        self.transport = transport
+        self.transport = transport.lower()
         self.config = config
         self.db: Asap2Database = db
         self.data_pool = DataPool()
@@ -194,7 +121,7 @@ class XcpClient(DeviceBase):
         self.lock = threading.Lock()
 
     def connect(self):
-        ecu = MyMaster(self.transport, self.config)
+        ecu = Master(self.transport, self.config)
         self.ecu = ecu
         ecu.connect()
         self.connected = True

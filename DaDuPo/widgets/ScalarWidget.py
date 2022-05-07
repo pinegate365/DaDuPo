@@ -30,11 +30,11 @@ from PySide2.QtCore import Qt, QTimer
 from PySide2.QtWidgets import QTableWidget, \
     QTableWidgetItem, QAbstractItemView, QLineEdit, QDoubleSpinBox
 
-from data.Asap2Database import ParameterType, Asap2Parameter, CompuMethodType, Asap2Signal
-from data.DataPool import DataPool
-from device.DeviceManager import DeviceManager
-from widgets.BaseUIEvents import BaseUIEvents
-from device.XcpClient import XcpClient
+from DaDuPo.data.Asap2Database import ParameterType, Asap2Parameter, CompuMethodType, Asap2Signal
+from DaDuPo.data.DataPool import DataPool
+from DaDuPo.device.DeviceManager import DeviceManager
+from DaDuPo.widgets.BaseUIEvents import BaseUIEvents
+from DaDuPo.device.XcpClient import XcpClient
 
 
 class ScalarBaseWidget(BaseUIEvents, QTableWidget):

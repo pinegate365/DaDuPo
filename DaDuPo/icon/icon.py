@@ -23,6 +23,8 @@ __copyright__ = """
 
 import re
 
+from pathlib import Path
+
 from PySide2 import QtCore
 from PySide2.QtCore import QSize, QByteArray
 from PySide2.QtGui import QIcon, QPixmap, QColor, Qt, QPainter, QImage
@@ -34,7 +36,7 @@ icons = {}
 def get_icon_by_name(name, color='black'):
     key = name + ':' + color
     if key not in icons.keys():
-        renderer = QSvgRenderer(f'icon/{name}.svg')
+        renderer = QSvgRenderer(str(Path(__file__).parent.joinpath(f'{name}.svg')))
         pixmap = QPixmap(renderer.defaultSize())
         pixmap.fill(Qt.transparent)
         painter = QPainter()

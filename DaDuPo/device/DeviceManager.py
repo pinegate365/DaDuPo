@@ -23,10 +23,11 @@ __copyright__ = """
 
 from enum import Enum
 from typing import Dict
+from pathlib import Path
 
-from device.DeviceBase import DeviceBase
-from device.XcpClient import XcpClient
-from data.DataPool import DataPool
+from DaDuPo.device.DeviceBase import DeviceBase
+from DaDuPo.device.XcpClient import XcpClient
+from DaDuPo.data.DataPool import DataPool
 
 
 class TransportType(Enum):
@@ -44,10 +45,11 @@ class DeviceManager(object):
             cls._instance = super(DeviceManager, cls).__new__(cls)
         return cls._instance
 
-    def load_devices(self, config):
+    def load_devices(self, project,config):
         for dev_cfg in config:
             for db_path in dev_cfg['database']:
-                db = self._data_pool.load_db(db_path)
+                full_db_path = Path(project) / db_path
+                db = self._data_pool.load_db(str(full_db_path))
                 dev = XcpClient(dev_cfg['transport'], dev_cfg, db)
                 self._devices[dev_cfg['name']] = dev
                 dev.add_event_listener(XcpClient.RECV, self._data_pool.on_new_xcp_signal)

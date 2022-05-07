@@ -30,8 +30,8 @@ import numpy as np
 import marshmallow_dataclass
 from pathlib import Path
 
-from data.Asap2Database import Asap2Parameter, Asap2Signal, Asap2Database, CompuMethod, CompuMethodType, DBType
-from data.Asap2DatabaseUtil import process_asap2_database, find_asap2_object
+from DaDuPo.data.Asap2Database import Asap2Parameter, Asap2Signal, Asap2Database, CompuMethod, CompuMethodType, DBType
+from DaDuPo.data.Asap2DatabaseUtil import process_asap2_database, find_asap2_object
 
 
 SignalConfig = collections.namedtuple('SignalConfig', ['sid', 'channel', 'rate', 'enabled'])
@@ -60,6 +60,12 @@ class DataPool(object):
             process_asap2_database(db)
             self._databases[db.name] = db
             return db
+
+    def clear(self):
+        self._signal_buffer = {}
+        self._signals = []
+        self._signal_config: Dict[str, SignalConfig] = {}
+        self._databases = {}
 
     @property
     def databases(self):

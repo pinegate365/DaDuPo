@@ -33,16 +33,16 @@ from PySide2.QtGui import QColor
 from PySide2.QtWidgets import QFrame, QDialog, QWidget, QMenu, QAction, QVBoxLayout, QTreeWidget, QTreeWidgetItem, \
     QAbstractItemView, QColorDialog
 
-from data.DataPool import DataPool
+from DaDuPo.data.DataPool import DataPool
 import numpy as np
 import pyqtgraph as pg
 import threading
 
 __all__ = ['ChartWidget']
 
-from icon.icon import Icon
-from widgets.BaseUIEvents import BaseUIEvents
-from widgets.SymbolWidget import SymbolWidget
+from DaDuPo.icon.icon import Icon
+from DaDuPo.widgets.BaseUIEvents import BaseUIEvents
+from DaDuPo.widgets.SymbolWidget import SymbolWidget
 
 
 class SignalSelectionDialog(QDialog):
@@ -281,7 +281,7 @@ class ChartWidget(BaseUIEvents, QWidget):
         # self.new_message.connect(self.update_bus_message_internal)
         self.sig_info_widget.signal_selected.connect(self.signal_selected)
         if config:
-            for sid in config.keys():
+            for sid in config.split('---'):
                 self.data_pool.measure_signal(sid)
             self.sig_info_widget.select_signal(config)
         self.setAcceptDrops(True)
