@@ -349,20 +349,34 @@ class XcpClient(DeviceBase):
     def download(self, sid, value):
         db_name, name = sid.split('/')
         addr, size, var = self.get_addr_size_by_name(name)
-        granularity_size = self.granularity_size()
-        if granularity_size == 1:
-            max_cto = self.ecu.slaveProperties.maxCto
-            max_elements = math.floor((max_cto - 2) / granularity_size)
-            remaining_elements = size
-            current_addr = addr
-            data = Asap2DatabaseUtil.phy_value_to_bytes(value, var)
-            self.lock.acquire()
-            while remaining_elements > 0:
+        data = Asap2DatabaseUtil.phy_value_to_bytes(value, var)
+        if hasattr(var, 'bitmask') and var.bitmask is not None:
+            self.download_bits(addr, size, data, int(var.bitmask,16))
+        else:
+            granularity_size = self.granularity_size()
+            if granularity_size == 1:
+                max_cto = self.ecu.slaveProperties.maxCto
+                max_elements = math.floor((max_cto - 2) / granularity_size)
+                remaining_elements = size
+                current_addr = addr
+                
+                self.lock.acquire()
+                while remaining_elements > 0:
+                    self.ecu.setMta(current_addr)
+                    self.ecu.download(data[:max_elements])
+                    remaining_elements -= max_elements
+                    current_addr += max_elements
+                self.lock.release()
+
+    def download_bits(self, addr, size, byts, bitmask):
+        for off in range(0,size,2):
+            andMask = ((bitmask >> off) & 0xFFFF)
+            if andMask:
+                current_addr = addr + off
+                xorMask = (byts[off] + (byts[off+1] << 8)) & andMask
                 self.ecu.setMta(current_addr)
-                self.ecu.download(data[:max_elements])
-                remaining_elements -= max_elements
-                current_addr += max_elements
-            self.lock.release()
+                andMask = ((~andMask) & 0xFFFF)
+                self.ecu.modifyBits(off*8, andMask, xorMask)
 
     def download_bytes(self, addr, byts):
         granularity_size = self.granularity_size()

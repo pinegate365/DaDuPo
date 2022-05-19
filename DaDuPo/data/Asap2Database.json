@@ -149,6 +149,10 @@
             "type":"integer",
             "default": 1
           },
+          "bitmask": {
+            "type":"string",
+            "pattern": "0x[a-f0-9A-f]+"
+          },
           "address": {
             "type":"string",
             "pattern": "0x[a-f0-9A-f]+"
@@ -197,6 +201,10 @@
               "CURVE",
               "MAP"
             ]
+          },
+          "bitmask": {
+            "type":"string",
+            "pattern": "0x[a-f0-9A-f]+"
           },
           "address": {
             "type":"string",

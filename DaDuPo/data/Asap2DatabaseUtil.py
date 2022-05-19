@@ -170,6 +170,12 @@ def size_of_asap2_object(obj: Union[Asap2Parameter, Asap2Signal]) -> int:
 def calc_phy_value_4_parameter(byts: bytes, obj: Asap2Parameter) -> \
         Tuple[Union[int, List, Tuple], Union[int, float, str, List, Tuple]]:
     if obj.parameter_type == ParameterType.VALUE:
+        if hasattr(obj, 'bitmask') and obj.bitmask is not None:
+            bitmask = int(obj.bitmask,16)
+            size = len(byts)
+            for off in range(0,size):
+                andMask = ((bitmask >> off) & 0xFF)
+                byts[off] = byts[off] & andMask
         return bytes_to_single_phy_value(byts, obj.datatype, obj.alignment, obj.parent.byte_order, obj.compu_method_ref)
     elif obj.parameter_type == ParameterType.ASCII:
         return list(byts), byts.decode('ascii')
@@ -240,6 +246,12 @@ def bytes_to_array_phy_value(byts: bytes, count: int, datatype: Datatype, alignm
 
 def calc_phy_value_4_signal(byts: bytes, obj: Asap2Signal) \
         -> Tuple[int, Union[int, float, str]]:
+    if hasattr(obj, 'bitmask') and obj.bitmask is not None:
+        bitmask = int(obj.bitmask,16)
+        size = len(byts)
+        for off in range(0,size):
+            andMask = ((bitmask >> off) & 0xFF)
+            byts[off] = byts[off] & andMask
     return bytes_to_single_phy_value(byts,
                                      obj.datatype,
                                      obj.alignment,

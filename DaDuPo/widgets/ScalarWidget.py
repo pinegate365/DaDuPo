@@ -144,7 +144,9 @@ class ScalarParameterWidget(ScalarBaseWidget):
                 spinbox.setDecimals(min(4, len(str(step).split('.')[-1]) - 1))
                 # spinbox.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
                 spinbox.setEnabled(self.device_manager.connected)
+                spinbox.setRange(-10000,10000)
                 self.setCellWidget(row, 1, spinbox)
+                #print('spinbox:',spinbox.maximum(),spinbox.minimum())
 
                 def on_value_changed(var_id, sbox, val):
                     self.device_manager.download(var_id, val)

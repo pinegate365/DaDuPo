@@ -104,11 +104,12 @@ class Asap2Parameter:
     ref_y: Optional[str]
     unit: Optional[str]
     db_desc: Optional[str]
+    bitmask: Optional[str]
 
     def __init__(self, address: str, alignment: Optional[Alignment], compu_method: Optional[str], count: int,
                  datatype: Datatype, description: Optional[str], identifier: Optional[str], name: str,
                  parameter_type: ParameterType, ref_x: Optional[str], ref_y: Optional[str],
-                 unit: Optional[str], db_desc: Optional[str]) -> None:
+                 unit: Optional[str], db_desc: Optional[str], bitmask: Optional[str]) -> None:
         self.address = address
         self.alignment = alignment
         self.compu_method = compu_method
@@ -122,6 +123,7 @@ class Asap2Parameter:
         self.ref_y = ref_y
         self.unit = unit
         self.db_desc = db_desc
+        self.bitmask = bitmask
 
 
 @dataclass
@@ -136,10 +138,11 @@ class Asap2Signal:
     name: str
     unit: Optional[str]
     db_desc: Optional[str]
+    bitmask: Optional[str]
 
     def __init__(self, address: str, alignment: Optional[Alignment], compu_method: Optional[str], count: Optional[int],
                  datatype: Datatype, description: Optional[str], identifier: Optional[str], name: str,
-                 unit: Optional[str], db_desc: Optional[str]) -> None:
+                 unit: Optional[str], db_desc: Optional[str], bitmask: Optional[str]) -> None:
         self.address = address
         self.alignment = alignment
         self.compu_method = compu_method
@@ -150,6 +153,7 @@ class Asap2Signal:
         self.name = name
         self.unit = unit
         self.db_desc = db_desc
+        self.bitmask = bitmask
 
 
 class DBType(Enum):
