@@ -21,6 +21,7 @@ __copyright__ = """
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import copy
 from enum import Enum
 from typing import Dict
 from pathlib import Path
@@ -46,7 +47,10 @@ class DeviceManager(object):
         return cls._instance
 
     def load_devices(self, project,config):
-        for dev_cfg in config:
+        for _cfg in config:
+            dev_cfg = copy.deepcopy(_cfg)
+            if 'SEED_N_KEY_DLL' in dev_cfg and not Path(dev_cfg['SEED_N_KEY_DLL']).is_absolute():
+                dev_cfg['SEED_N_KEY_DLL'] = str(Path(project) / dev_cfg['SEED_N_KEY_DLL'])
             for db_path in dev_cfg['database']:
                 full_db_path = Path(project) / db_path
                 db = self._data_pool.load_db(str(full_db_path))
