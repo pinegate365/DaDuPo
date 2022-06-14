@@ -392,6 +392,7 @@ class XcpClient(DeviceBase):
 
     def disconnect(self):
         self.ecu.disconnect()
+        self.ecu.transport.finishListener()
         self.ecu.transport.close()
         self.connected = False
 
